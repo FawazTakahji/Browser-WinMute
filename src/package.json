@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.65.0",
+    "@wxt-dev/auto-icons": "^1.1.1",
     "eslint": "^10.8.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.65.0",
