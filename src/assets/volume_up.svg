@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+  <defs>
+    <!-- Vibrant Blue Gradient (inspired by icon.svg Gradient2) -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2888D7" />
+      <stop offset="100%" stop-color="#2BA8E6" />
+    </linearGradient>
+
+    <!-- Warm Gold/Amber Gradient (inspired by icon.svg path11 / g29) -->
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB020" />
+      <stop offset="100%" stop-color="#F9BB6E" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter for Pop on Light & Dark Backgrounds -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Speaker Body -->
+    <path d="M120-360v-240h160l200-200v640L280-360H120Z" fill="url(#blueGrad)" stroke="#12479F" stroke-width="16" stroke-linejoin="round" />
+
+    <!-- Inner Sound Wave -->
+    <path d="M560-320v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320Z" fill="url(#amberGrad)" stroke="#D97706" stroke-width="12" stroke-linejoin="round" />
+
+    <!-- Outer Sound Wave -->
+    <path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131Z" fill="url(#amberGrad)" stroke="#D97706" stroke-width="12" stroke-linejoin="round" />
+  </g>
+</svg>
