@@ -2,13 +2,28 @@ import { defineConfig } from 'wxt';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-    manifest: ({}) => {
+    manifestVersion: 3,
+    manifest: (env) => {
+        const permissions: string[] = [];
+        if (env.browser === "firefox") {
+            permissions.push("sessions");
+        }
+
         return {
             name: "Window Mute",
             description: "Placeholder description",
+            permissions: permissions,
             action: {
                 default_area: "navbar",
                 default_title: "Window Mute"
+            },
+            browser_specific_settings: {
+                gecko: {
+                    id: "window-mute@fawaztakahji.github.io",
+                    data_collection_permissions: {
+                        required: ["none"]
+                    }
+                }
             }
         };
     },
@@ -20,3 +35,4 @@ export default defineConfig({
         developmentIndicator: false,
         sizes: [16, 32, 48, 96, 128]
     }
+});
