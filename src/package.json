@@ -16,11 +16,18 @@
     "postinstall": "wxt prepare"
   },
   "devDependencies": {
+    "@types/firefox-webext-browser": "^143.0.0",
+    "@types/webextension-polyfill": "^0.12.5",
     "@typescript-eslint/parser": "^8.65.0",
     "@wxt-dev/auto-icons": "^1.1.1",
+    "@wxt-dev/webextension-polyfill": "^1.0.0",
     "eslint": "^10.8.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.65.0",
+    "webextension-polyfill": "^0.12.0",
     "wxt": "^0.20.27"
+  },
+  "dependencies": {
+    "@wxt-dev/browser": "^0.2.2"
   }
 }

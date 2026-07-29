@@ -1,11 +1,10 @@
 import volumeOffIcon from '@/assets/volume_off.svg';
 import volumeUpIcon from '@/assets/volume_up.svg';
-import { Browser } from "@wxt-dev/browser";
-import Tab = Browser.tabs.Tab;
-import Window = Browser.windows.Window;
 import { getWindowValue, setWindowValue } from "./windows";
-import { FirefoxTabIconDetails, FirefoxTitleDetails } from "@/types/firefox-definitions";
-import OnUpdatedInfo = Browser.tabs.OnUpdatedInfo;
+import type { Tabs, Windows } from 'webextension-polyfill';
+type Tab = Tabs.Tab;
+type Window = Windows.Window;
+type OnUpdatedInfo = Tabs.OnUpdatedChangeInfoType;
 
 const WINDOW_MUTED_KEY = 'isWindowMuted';
 
@@ -32,6 +31,9 @@ export default defineBackground(() => {
 });
 
 async function handleActionClick(tab: Tab): Promise<void> {
+  if (tab.windowId === undefined) {
+    return;
+  }
   const isMuted = await isWindowMuted(tab.windowId);
   const nextIsMuted = !isMuted;
 
@@ -77,12 +79,12 @@ function setWindowActionTitleAndIcon(windowId: number, isMuted: boolean): void {
   browser.action.setTitle({
     title: isMuted ? 'Unmute Window' : 'Mute Window',
     windowId: windowId
-  } as FirefoxTitleDetails).catch(e => console.error('Failed to set action title:', e));
+  }).catch(e => console.error('Failed to set action title:', e));
 
   browser.action.setIcon({
     path: isMuted ? volumeOffIcon : volumeUpIcon,
     windowId: windowId
-  } as FirefoxTabIconDetails).catch(e => console.error('Failed to set action icon:', e));
+  }).catch(e => console.error('Failed to set action icon:', e));
 }
 
 async function isWindowMuted(id: number): Promise<boolean> {

@@ -28,7 +28,8 @@ export default defineConfig({
         };
     },
     modules: [
-        "@wxt-dev/auto-icons"
+        "@wxt-dev/auto-icons",
+        "@wxt-dev/webextension-polyfill"
     ],
     autoIcons: {
         baseIconPath: "./assets/icon.svg",
