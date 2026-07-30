@@ -7,6 +7,8 @@ export default defineConfig({
         const permissions: string[] = [];
         if (env.browser === "firefox") {
             permissions.push("sessions");
+        } else if (env.browser === "chrome") {
+            permissions.push("storage");
         }
 
         return {
