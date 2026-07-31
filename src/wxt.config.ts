@@ -1,4 +1,7 @@
 import { defineConfig } from 'wxt';
+import sharp from 'sharp';
+import { resolve } from "node:path";
+import { mkdir } from "node:fs/promises";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -28,6 +31,36 @@ export default defineConfig({
                 }
             }
         };
+    },
+    hooks: {
+        'build:publicAssets': async (wxt, files) => {
+            if (wxt.config.browser !== "chrome") {
+                return;
+            }
+
+            const icons = ["volume_off", "volume_up"];
+            const sizes = [16, 24, 32];
+
+            const assetDir = resolve(wxt.config.srcDir, "assets");
+            const outputDir = resolve(wxt.config.outDir, "assets");
+
+            await mkdir(outputDir, { recursive: true });
+
+            for (const icon of icons) {
+                for (const size of sizes) {
+                    const fileName = `${icon}_${size}.png`;
+                    const src = resolve(assetDir, `${icon}.svg`);
+                    const dest = resolve(outputDir, fileName);
+
+                    await sharp(src).resize(size).png().toFile(dest);
+
+                    files.push({
+                        absoluteSrc: dest,
+                        relativeDest: `assets/${fileName}`
+                    });
+                }
+            }
+        }
     },
     modules: [
         "@wxt-dev/auto-icons",
