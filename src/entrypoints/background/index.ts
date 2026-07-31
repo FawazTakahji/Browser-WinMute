@@ -31,6 +31,11 @@ export default defineBackground(() => {
     } else if (import.meta.env.CHROME) {
         browser.tabs.onActivated.addListener(handleTabActivatedChrome);
         browser.tabs.onUpdated.addListener(handleTabUpdateChrome);
+
+        // This is to help hide the flashing when a new tab is created.
+        browser.action.setIcon({
+            path: VOLUME_UP_ICONS
+        }).catch(err => console.log("An error occurred while setting default action icon:", err));
     }
 
     (async () => {
@@ -170,6 +175,10 @@ async function applyWindowMuteState(id: number, isMuted: boolean): Promise<void>
     for (const tab of tabs) {
         if (tab.id !== undefined) {
             await setTabMuteState(tab.id, isMuted);
+
+            if (import.meta.env.CHROME) {
+                setTabActionTitleAndIcon(tab.id, isMuted);
+            }
         }
     }
 }
