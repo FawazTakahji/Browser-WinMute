@@ -2,18 +2,36 @@ import volumeOffIcon from '@/assets/volume_off.svg';
 import volumeUpIcon from '@/assets/volume_up.svg';
 import { getWindowValue, setWindowValue } from "./windows";
 import type { Tabs, Windows } from 'webextension-polyfill';
+import { Browser } from "@wxt-dev/browser";
+import OnActivatedInfo = Browser.tabs.OnActivatedInfo;
 
 type Tab = Tabs.Tab;
 type Window = Windows.Window;
 type OnUpdatedInfo = Tabs.OnUpdatedChangeInfoType;
 
 const WINDOW_MUTED_KEY = 'isWindowMuted';
+const VOLUME_OFF_ICONS = {
+    16: "/assets/volume_off_16.png",
+    24: "/assets/volume_off_24.png",
+    32: "/assets/volume_off_32.png"
+};
+const VOLUME_UP_ICONS = {
+    16: "/assets/volume_up_16.png",
+    24: "/assets/volume_up_24.png",
+    32: "/assets/volume_up_32.png"
+};
 
 export default defineBackground(() => {
     browser.action.onClicked.addListener(handleActionClick);
     browser.tabs.onUpdated.addListener(handleTabUpdate);
     browser.tabs.onCreated.addListener(handleTabCreate);
-    browser.windows.onCreated.addListener(handleWindowCreate);
+
+    if (import.meta.env.FIREFOX) {
+        browser.windows.onCreated.addListener(handleWindowCreate);
+    } else if (import.meta.env.CHROME) {
+        browser.tabs.onActivated.addListener(handleTabActivatedChrome);
+        browser.tabs.onUpdated.addListener(handleTabUpdateChrome);
+    }
 
     (async () => {
         try {
@@ -21,7 +39,14 @@ export default defineBackground(() => {
             for (const window of windows) {
                 if (window.id !== undefined) {
                     const isMuted = await isWindowMuted(window.id);
-                    setWindowActionTitleAndIcon(window.id, isMuted);
+                    if (import.meta.env.FIREFOX) {
+                        setWindowActionTitleAndIcon(window.id, isMuted);
+                    } else if (import.meta.env.CHROME) {
+                        const [activeTab] = await browser.tabs.query({ windowId: window.id, active: true });
+                        if (activeTab?.id !== undefined) {
+                            setTabActionTitleAndIcon(activeTab.id, isMuted);
+                        }
+                    }
                     await applyWindowMuteState(window.id, isMuted);
                 }
             }
@@ -41,7 +66,11 @@ async function handleActionClick(tab: Tab): Promise<void> {
     await setWindowMuteState(tab.windowId, nextIsMuted);
     await applyWindowMuteState(tab.windowId, nextIsMuted);
 
-    setWindowActionTitleAndIcon(tab.windowId, nextIsMuted);
+    if (import.meta.env.FIREFOX) {
+        setWindowActionTitleAndIcon(tab.windowId, nextIsMuted);
+    } else if (import.meta.env.CHROME && tab.id !== undefined) {
+        setTabActionTitleAndIcon(tab.id, nextIsMuted);
+    }
 }
 
 async function handleTabUpdate(id: number, changeInfo: OnUpdatedInfo, tab: Tab): Promise<void> {
@@ -76,6 +105,20 @@ async function handleWindowCreate(window: Window): Promise<void> {
     setWindowActionTitleAndIcon(window.id, isMuted);
 }
 
+async function handleTabActivatedChrome(activeInfo: OnActivatedInfo): Promise<void> {
+    const isMuted = await isWindowMuted(activeInfo.windowId);
+    setTabActionTitleAndIcon(activeInfo.tabId, isMuted);
+}
+
+async function handleTabUpdateChrome(id: number, changeInfo: OnUpdatedInfo, tab: Tab): Promise<void> {
+    if (changeInfo.status !== "loading" || tab.windowId === undefined || tab.id === undefined) {
+        return;
+    }
+
+    const isMuted = await isWindowMuted(tab.windowId);
+    setTabActionTitleAndIcon(tab.id, isMuted);
+}
+
 function setWindowActionTitleAndIcon(windowId: number, isMuted: boolean): void {
     browser.action.setTitle({
         title: isMuted ? 'Unmute Window' : 'Mute Window',
@@ -86,6 +129,18 @@ function setWindowActionTitleAndIcon(windowId: number, isMuted: boolean): void {
         path: isMuted ? volumeOffIcon : volumeUpIcon,
         windowId: windowId
     }).catch(e => console.error('Failed to set action icon:', e));
+}
+
+function setTabActionTitleAndIcon(tabId: number, isMuted: boolean): void {
+    browser.action.setTitle({
+        title: isMuted ? "Unmute Window" : "Mute Window",
+        tabId: tabId
+    }).catch(e => console.error("Failed to set action title:", e));
+
+    browser.action.setIcon({
+        path: isMuted ? VOLUME_OFF_ICONS : VOLUME_UP_ICONS,
+        tabId: tabId
+    }).catch(e => console.error("Failed to set action icon:", e));
 }
 
 async function isWindowMuted(id: number): Promise<boolean> {
