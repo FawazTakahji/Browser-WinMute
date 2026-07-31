@@ -16,7 +16,6 @@ export default defineConfig({
 
         return {
             name: "Window Mute",
-            description: "Placeholder description",
             permissions: permissions,
             action: {
                 default_area: "navbar",

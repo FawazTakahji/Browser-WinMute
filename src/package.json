@@ -1,6 +1,6 @@
 {
   "name": "window-mute",
-  "description": "manifest.json description",
+  "description": "Instantly mute or unmute all tabs within the current window with a single click.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
