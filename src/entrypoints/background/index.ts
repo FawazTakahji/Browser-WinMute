@@ -22,6 +22,15 @@ const VOLUME_UP_ICONS = {
 };
 
 export default defineBackground(() => {
+    browser.runtime.onInstalled.addListener(async details => {
+        if ((details.reason === "install" || details.reason === "update") && !import.meta.env.DEV) {
+            const pageUrl = browser.runtime.getURL(`installed.html?reason=${details.reason}`);
+            await browser.tabs.create({
+                url: pageUrl
+            });
+        }
+    })
+
     browser.action.onClicked.addListener(handleActionClick);
     browser.tabs.onUpdated.addListener(handleTabUpdate);
     browser.tabs.onCreated.addListener(handleTabCreate);
