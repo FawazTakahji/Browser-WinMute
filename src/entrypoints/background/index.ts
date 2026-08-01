@@ -1,6 +1,7 @@
 import volumeOffIcon from '@/assets/volume_off.svg';
 import volumeUpIcon from '@/assets/volume_up.svg';
 import { getWindowValue, setWindowValue } from "./windows";
+import { checkExtensionVersion } from "./version-checker";
 import type { Tabs, Windows } from 'webextension-polyfill';
 import { Browser } from "@wxt-dev/browser";
 import OnActivatedInfo = Browser.tabs.OnActivatedInfo;
@@ -22,6 +23,8 @@ const VOLUME_UP_ICONS = {
 };
 
 export default defineBackground(() => {
+    checkExtensionVersion();
+
     browser.runtime.onInstalled.addListener(async details => {
         if ((details.reason === "install" || details.reason === "update") && !import.meta.env.DEV) {
             const pageUrl = browser.runtime.getURL(`installed.html?reason=${details.reason}`);

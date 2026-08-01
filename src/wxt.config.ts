@@ -7,11 +7,9 @@ import { mkdir } from "node:fs/promises";
 export default defineConfig({
     manifestVersion: 3,
     manifest: (env) => {
-        const permissions: string[] = [];
+        const permissions: string[] = ["storage"];
         if (env.browser === "firefox") {
             permissions.push("sessions");
-        } else if (env.browser === "chrome") {
-            permissions.push("storage");
         }
 
         return {
