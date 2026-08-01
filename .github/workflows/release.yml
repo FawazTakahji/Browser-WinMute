@@ -1,0 +1,66 @@
+name: Release
+run-name: Release v${{ github.event.inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Extension Version'
+        required: true
+        type: string
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    environment: Release
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.18.1
+          cache: 'npm'
+          cache-dependency-path: src/package-lock.json
+
+      - name: Update version
+        working-directory: ./src
+        run: |
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: npm ci
+
+      - name: Zip extensions
+        working-directory: ./src
+        env:
+          WXT_GITHUB_OWNER: ${{ github.repository_owner }}
+          WXT_GITHUB_REPO: ${{ github.event.repository.name }}
+          WXT_KOFI_URL: ${{ vars.KOFI_URL }}
+        run: |
+          npm run zip
+          npm run zip:firefox
+
+      - name: Generate Build Attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            src/.output/window-mute-${{ github.event.inputs.version }}-chrome.zip
+            src/.output/window-mute-${{ github.event.inputs.version }}-firefox.zip
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ github.event.inputs.version }}" \
+            "src/.output/window-mute-${{ github.event.inputs.version }}-chrome.zip" \
+            "src/.output/window-mute-${{ github.event.inputs.version }}-firefox.zip" \
+            --title "v${{ github.event.inputs.version }}" \
+            --generate-notes
