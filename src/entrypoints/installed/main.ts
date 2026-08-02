@@ -40,7 +40,7 @@ if (reason === 'install') {
     }
     if (btnGithub) {
         const currentHref = btnGithub.getAttribute('href') || '';
-        if (currentHref && !currentHref.includes('%WXT_GITHUB_URL%')) {
+        if (currentHref) {
             const cleanUrl = currentHref.replace(/\/+$/, '');
             btnGithub.href = `${cleanUrl}/releases/latest`;
         }
