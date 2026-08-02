@@ -4,6 +4,15 @@
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="assets/screenshot%2001.png" alt="Window Mute Preview 1" width="48%">
+  <img src="assets/screenshot%2002.png" alt="Window Mute Preview 2" width="48%">
+</p>
+
+---
+
 ## Features
 - **Single-Click Toggle**: Mute or unmute all tabs in your current browser window instantly by clicking the toolbar icon.
 - **Auto-Mute New Tabs**: New tabs automatically inherit the current window's mute state.
