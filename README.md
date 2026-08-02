@@ -12,6 +12,26 @@
 
 ---
 
+## Keyboard Shortcuts
+
+- **Mute / Unmute Current Window:** `Alt + Shift + M` (or `Cmd + Shift + M` on macOS)  
+  *Toggles audio for all tabs in the currently active window.*
+
+### How to Customize Shortcuts
+
+#### **Google Chrome / Chromium Browsers**
+1. Open a new tab and navigate to `chrome://extensions/shortcuts`.
+2. Scroll down to **Window Mute**.
+3. Click the pencil icon next to the shortcut field and press your preferred key combination.
+
+#### **Mozilla Firefox**
+1. Open a new tab and navigate to `about:addons`.
+2. Click the gear icon in the top right corner of the page.
+3. Select **Manage Extension Shortcuts**.
+4. Locate **Window Mute** and enter your custom key combination.
+
+---
+
 ## Planned Features
 Here is what's coming next:
 

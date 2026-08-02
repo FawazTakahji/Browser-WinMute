@@ -19,6 +19,15 @@ export default defineConfig({
                 default_area: "navbar",
                 default_title: "Window Mute"
             },
+            commands: {
+                "toggle-window-mute": {
+                    suggested_key: {
+                        default: "Alt+Shift+M",
+                        mac: "Command+Shift+M"
+                    },
+                    description: "Toggle mute in current window"
+                }
+            },
             browser_specific_settings: {
                 gecko: {
                     id: "window-mute@fawaztakahji.github.io",

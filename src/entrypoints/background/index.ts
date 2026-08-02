@@ -34,6 +34,7 @@ export default defineBackground(() => {
         }
     })
 
+    browser.commands.onCommand.addListener(handleCommand)
     browser.action.onClicked.addListener(handleActionClick);
     browser.tabs.onUpdated.addListener(handleTabUpdate);
     browser.tabs.onCreated.addListener(handleTabCreate);
@@ -72,6 +73,34 @@ export default defineBackground(() => {
         }
     })();
 });
+
+async function handleCommand(command: string): Promise<void> {
+    if (command === "toggle-window-mute") {
+        const window = await browser.windows.getCurrent();
+        if (window.id === undefined) {
+            console.warn("Couldn't retrieve window id");
+            return;
+        }
+
+        const isMuted = await isWindowMuted(window.id);
+        const nextIsMuted = !isMuted;
+
+        await setWindowMuteState(window.id, nextIsMuted);
+        await applyWindowMuteState(window.id, nextIsMuted);
+
+        if (import.meta.env.FIREFOX) {
+            setWindowActionTitleAndIcon(window.id, nextIsMuted);
+        } else if (import.meta.env.CHROME) {
+            const [activeTab] = await browser.tabs.query({
+                windowId: window.id,
+                active: true
+            });
+            if (activeTab?.id !== undefined) {
+                setTabActionTitleAndIcon(activeTab.id, nextIsMuted);
+            }
+        }
+    }
+}
 
 async function handleActionClick(tab: Tab): Promise<void> {
     if (tab.windowId === undefined) {
