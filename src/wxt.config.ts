@@ -67,5 +67,10 @@ export default defineConfig({
         baseIconPath: "./assets/icon.svg",
         developmentIndicator: false,
         sizes: [16, 32, 48, 96, 128]
-    }
+    },
+    vite: () => ({
+        build: {
+            minify: false,
+        }
+    })
 });
